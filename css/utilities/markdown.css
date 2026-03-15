@@ -1,0 +1,139 @@
+/* css/utilities/markdown.css */
+.response-display h1,
+.response-display h2,
+.response-display h3,
+.response-display h4,
+.response-display h5,
+.response-display h6 {
+  margin: 20px 0 10px 0;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.response-display h1 {
+  font-size: 24px;
+  color: #2c3e50;
+}
+
+.response-display h2 {
+  font-size: 20px;
+  color: #34495e;
+}
+
+.response-display h3 {
+  font-size: 18px;
+  color: #34495e;
+}
+
+.response-display h4 {
+  font-size: 16px;
+  color: #34495e;
+}
+
+.response-display p {
+  margin: 10px 0;
+}
+
+.response-display ul,
+.response-display ol {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.response-display li {
+  margin: 5px 0;
+}
+
+.response-display blockquote {
+  border-left: 4px solid #3498db;
+  margin: 15px 0;
+  padding: 10px 15px;
+  background: #f8f9fa;
+  font-style: italic;
+}
+
+.response-display table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 15px 0;
+}
+
+.response-display th,
+.response-display td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.response-display th {
+  background: #f8f9fa;
+  font-weight: 600;
+}
+
+.response-display a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+.response-display a:hover {
+  text-decoration: underline;
+}
+
+/* Inline code */
+.response-display code:not([class*="language-"]) {
+  background: #f1f3f4;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: "Monaco", "Consolas", "Courier New", monospace;
+  font-size: 13px;
+  color: #e74c3c;
+}
+
+/* Code blocks */
+.response-display pre {
+  background: #2d3748;
+  border-radius: 8px;
+  padding: 0;
+  margin: 15px 0;
+  overflow-x: auto;
+  position: relative;
+}
+
+.response-display pre code {
+  background: none;
+  padding: 20px;
+  display: block;
+  color: #f7fafc;
+  font-family: "Monaco", "Consolas", "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Copy button for code blocks */
+.code-block-container {
+  position: relative;
+  margin: 15px 0;
+}
+
+.copy-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #f7fafc;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.code-block-container:hover .copy-button {
+  opacity: 1;
+}
+
+.copy-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}

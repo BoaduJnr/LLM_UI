@@ -1,0 +1,113 @@
+/* css/theme/dark.css */
+[data-theme="dark"] {
+  background-color: #0f1419;
+  color: #e6edf3;
+}
+
+[data-theme="dark"] body {
+  background-color: #0f1419;
+}
+
+[data-theme="dark"] .main-container {
+  background: #1c2533;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .header {
+  background: #1c2533;
+  border-bottom-color: #30363d;
+  color: #e6edf3;
+}
+
+[data-theme="dark"] .response-display {
+  background: #161b22;
+  border-color: #30363d;
+  color: #e6edf3;
+}
+
+[data-theme="dark"] .input-section {
+  background: rgba(22, 27, 34, 0.98);
+  border-color: #30363d;
+  color: #e6edf3;
+}
+
+[data-theme="dark"] #prompt-input {
+  background: #0d1117;
+  border-color: #30363d;
+  color: #e6edf3;
+}
+
+[data-theme="dark"] #prompt-input:focus {
+  border-color: #1f6feb;
+}
+
+[data-theme="dark"] .btn-primary {
+  background: #1f6feb;
+}
+
+[data-theme="dark"] .btn-primary:hover {
+  background: #1a5fb4;
+}
+
+[data-theme="dark"] .btn-speech {
+  background: #238636;
+}
+
+[data-theme="dark"] .btn-speech:hover {
+  background: #196127;
+}
+
+[data-theme="dark"] .config-panel {
+  background: #1c2533;
+  border-right-color: #30363d;
+}
+
+[data-theme="dark"] .config-header {
+  background: #161b22;
+  border-bottom-color: #30363d;
+  color: #e6edf3;
+}
+
+[data-theme="dark"] .form-group label {
+  color: #e6edf3;
+}
+
+[data-theme="dark"] .form-group select {
+  background: #0d1117;
+  border-color: #30363d;
+  color: #e6edf3;
+}
+
+[data-theme="dark"] .form-group select:focus {
+  border-color: #1f6feb;
+}
+
+[data-theme="dark"] .model-list li {
+  background: #0d1117;
+  border-color: #30363d;
+  color: #e6edf3;
+}
+
+[data-theme="dark"] .model-list li:hover {
+  background: #161b22;
+  border-color: #1f6feb;
+}
+
+[data-theme="dark"] .model-list li.selected {
+  background: #1a365d;
+  border-color: #1f6feb;
+  color: #58a6ff;
+}
+
+[data-theme="dark"] .config-toggle-btn,
+[data-theme="dark"] .theme-toggle-btn {
+  background: #21262d;
+  border-color: #30363d;
+  color: #e6edf3;
+}
+
+[data-theme="dark"] .config-toggle-btn:hover,
+[data-theme="dark"] .theme-toggle-btn:hover {
+  background: #30363d;
+  border-color: #1f6feb;
+}

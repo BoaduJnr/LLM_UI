@@ -1,0 +1,38 @@
+/* css/components/selectable.css */
+.selectable-item {
+  padding: 0.5rem 1rem;
+  margin: 0.3rem 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #f8f8f8;
+  transition: background 0.2s;
+}
+
+.selectable-item:hover {
+  background-color: #e6f0ff;
+}
+
+.selectable-item.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.capabilities {
+  width: 100%;
+  height: 150px;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.capabilities option {
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+.capabilities option:checked {
+  background: #3b82f6;
+  color: white;
+}
