@@ -1,26 +1,136 @@
 /* css/responsive/media.css */
-@media (max-width: 768px) {
-  .main-container {
-    flex-direction: column;
+
+/* Tablet & phone: sidebar becomes an off-canvas drawer */
+@media (max-width: 860px) {
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 50;
+    width: min(var(--sidebar-width), 86vw);
+    margin-left: 0;
+    padding-top: max(12px, env(safe-area-inset-top));
+    box-shadow: var(--shadow-lg);
+    transform: translateX(0);
   }
 
-  .config-panel {
-    width: 100%;
-    max-height: 40vh;
+  /* Closed unless explicitly opened, so the drawer never flashes on load */
+  .app:not(.sidebar-open) .sidebar {
+    margin-left: 0;
+    visibility: hidden;
+    transform: translateX(-100%);
   }
 
-  .config-panel.collapsed {
-    max-height: 60px;
-    width: 100%;
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: var(--backdrop);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.28s var(--ease);
   }
 
-  .chat-section {
-    flex: 1;
-    min-height: 60vh;
+  .app.sidebar-open .sidebar-backdrop {
+    opacity: 1;
+    pointer-events: auto;
   }
 
-  .config-toggle-btn {
-    font-size: 12px;
-    padding: 6px 8px;
+  /* The drawer overlays the content, so the header toggle stays visible */
+  .app.sidebar-open .header-menu {
+    display: inline-grid;
+  }
+
+  .search-kbd {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  :root {
+    --header-height: 54px;
+  }
+
+  .header {
+    padding: 0 8px;
+  }
+
+  .response-display {
+    padding: 16px 14px 24px;
+  }
+
+  .input-section {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .suggestions {
+    grid-template-columns: 1fr;
+    margin-top: 10px;
+  }
+
+  .suggestion:nth-child(n + 3) {
+    display: none;
+  }
+
+  .message {
+    gap: 10px;
+  }
+
+  .message-avatar {
+    width: 26px;
+    height: 26px;
+  }
+
+  .message-header {
+    height: 26px;
+    line-height: 26px;
+  }
+
+  .message--user .message-content {
+    max-width: 92%;
+  }
+
+  /* Touch devices have no hover, so keep actions visible */
+  .message-actions {
+    opacity: 1;
+  }
+
+  .mode-btn {
+    padding: 4px 10px;
+  }
+
+  .composer-hint {
+    display: none;
+  }
+
+  /* 16px prevents iOS from zooming into the textarea on focus */
+  #prompt-input,
+  .search-field input,
+  .select {
+    font-size: 16px;
+  }
+
+  .scroll-bottom-btn {
+    bottom: 120px;
+  }
+}
+
+@media (hover: none) {
+  .message-actions {
+    opacity: 1;
+  }
+}
+
+/* Short landscape phones: give the thread more room */
+@media (max-height: 480px) {
+  .empty-mark,
+  .empty-state p,
+  .suggestions {
+    display: none;
+  }
+
+  #prompt-input {
+    max-height: 96px;
   }
 }

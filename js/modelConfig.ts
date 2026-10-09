@@ -1,7 +1,7 @@
 // Fully Updated TypeScript Models File for Puter AI Models
 // Includes Providers, Model IDs, Capabilities, and Searchable Index
 
-enum Provider {
+export enum Provider {
   OpenAI = "OpenAI",
   Anthropic = "Anthropic",
   Qwen = "Qwen",
@@ -32,7 +32,7 @@ enum Provider {
   Meta = "Meta"
 }
 
-enum Capability {
+export enum Capability {
   Chat = "chat",
   Reasoning = "reasoning",
   Coding = "coding",
@@ -178,12 +178,12 @@ enum ModelID {
 
 }
 
-interface ModelInfo {
+export interface ModelInfo {
   provider: Provider;
   capabilities: Capability[];
 }
 
-const Models: Record<ModelID, ModelInfo> = {
+export const Models: Record<ModelID, ModelInfo> = {
   [ModelID.GPT_5_2]: { provider: Provider.OpenAI, capabilities: [Capability.Chat, Capability.Coding, Capability.Reasoning] },
   [ModelID.GPT_Image_1]: { provider: Provider.OpenAI, capabilities: [Capability.Image, Capability.Multimodal] },
   [ModelID.DALL_E_3]: { provider: Provider.OpenAI, capabilities: [Capability.Image, Capability.Multimodal] },
@@ -304,77 +304,49 @@ const Models: Record<ModelID, ModelInfo> = {
 };
 
 
-const platformSelect = document.getElementById("platform-select") as HTMLSelectElement;
-Object.values(Provider).forEach(provider => {
-  const option = document.createElement("option");
-  option.value = provider.toString();
-  option.textContent = provider.toString();
-  platformSelect.appendChild(option);
-})
-
-const modelCapabilities = document.getElementById("capabilities") as HTMLSelectElement;
-Object.values(Capability).forEach(capability => {
-  const option = document.createElement("option");
-  option.value = capability;
-  option.textContent = capability.charAt(0).toUpperCase() + capability.slice(1); // "Chat"
-  modelCapabilities.appendChild(option);
-});
-
-
-const modelList = document.getElementById("model-list") as HTMLSelectElement;
-let selectedModel = null;
-let selectedPlatform: string | null = null
-
-
-platformSelect.addEventListener("change", modelOptions);
-
-modelCapabilities.addEventListener("change", modelOptions);
-
-function modelOptions() {
-  selectedPlatform = platformSelect.value;
-  const selectedCapabilities = Array.from(modelCapabilities.selectedOptions)
-    .map(opt => toCapability(opt.value.toLowerCase()));
-
-  const selectedModels = Object.entries(Models).filter(([key, model]) => {
-    const matchesCapability = selectedCapabilities.length === 0
-      || model.capabilities.some(c => selectedCapabilities.includes(c));
-
-    const matchesProvider = !selectedPlatform || selectedPlatform.length === 0
-      || model.provider.toString() === selectedPlatform;
-
-    return matchesCapability && matchesProvider;
-  }).map(([key, model]) => key.toString());
-
-  modelList.innerHTML = "";
-  if (selectedModels.length === 0) {
-    modelList.innerHTML = "<li><em>No models available</em></li>";
-    return;
-  }
-
-  selectedModels.forEach(model => {
-    const li = document.createElement("li");
-    li.textContent = model;
-    li.classList.add("selectable-item");
-
-    li.addEventListener("click", () => {
-      // Remove active from all
-      document.querySelectorAll(".selectable-item").forEach(item => item.classList.remove("active"));
-
-      // Add active to selected
-      li.classList.add("active");
-      selectedModel = model;
-
-      console.log("Selected model:", selectedModel);
-    });
-
-    modelList.appendChild(li);
-  });
+export interface ModelEntry extends ModelInfo {
+  id: string;
+  name: string;
 }
 
+export interface ModelFilter {
+  query?: string;
+  provider?: string;
+  capabilities?: string[];
+}
 
-function toCapability(value: string): Capability {
-  if (!Object.values(Capability).includes(value as Capability)) {
-    throw new Error(`Invalid capability: ${value}`);
-  }
-  return value as Capability;
+// Flat, sorted list used by the model picker
+export const modelEntries: ModelEntry[] = Object.entries(Models)
+  .map(([id, info]) => ({ id, name: id.split("/").pop() ?? id, ...info }))
+  .sort((a, b) => a.provider.localeCompare(b.provider) || a.name.localeCompare(b.name));
+
+export const providers: string[] = Object.values(Provider)
+  .filter(p => modelEntries.some(m => m.provider === p))
+  .sort((a, b) => a.localeCompare(b));
+
+export const capabilities: string[] = Object.values(Capability);
+
+export function getModel(id: string | null | undefined): ModelEntry | undefined {
+  return modelEntries.find(m => m.id === id);
+}
+
+export function hasCapability(id: string | null | undefined, capability: Capability): boolean {
+  return !!getModel(id)?.capabilities.includes(capability);
+}
+
+export function filterModels({ query = "", provider = "", capabilities = [] }: ModelFilter): ModelEntry[] {
+  const q = query.trim().toLowerCase();
+
+  return modelEntries.filter(model => {
+    const matchesQuery = !q
+      || model.id.toLowerCase().includes(q)
+      || model.provider.toLowerCase().includes(q);
+
+    const matchesProvider = !provider || model.provider === provider;
+
+    const matchesCapability = capabilities.length === 0
+      || capabilities.every(c => model.capabilities.includes(c as Capability));
+
+    return matchesQuery && matchesProvider && matchesCapability;
+  });
 }

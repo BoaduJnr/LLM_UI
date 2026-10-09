@@ -1,113 +1,88 @@
-// Markdown rendering and code highlighting functions
-      function renderMarkdown(text) {
-        // Configure marked with the new highlight extension
-        const markedHighlight = globalThis.markedHighlight;
-        
-        if (markedHighlight) {
-          // Use the new marked-highlight extension
-          marked.use(markedHighlight.markedHighlight({
-            highlight(code, lang) {
-              if (lang && Prism.languages[lang]) {
-                return Prism.highlight(code, Prism.languages[lang], lang);
-              }
-              return code;
-            }
-          }));
-        }
+// Markdown rendering, sanitising and code-block helpers
+// marked, DOMPurify and Prism are loaded globally from CDN in index.html
 
-        // Configure other marked options
-        marked.setOptions({
-          mangle:false,
-          headerIds:false,
-          breaks: true,
-          gfm: true
-        });
+let markedConfigured = false;
 
-        return marked.parse(text);
-      }
+function configureMarked() {
+  if (markedConfigured || !globalThis.marked) return;
+  marked.setOptions({
+    mangle: false,
+    headerIds: false,
+    breaks: true,
+    gfm: true
+  });
+  markedConfigured = true;
+}
 
-      function addCopyButtonsToCodeBlocks(container) {
-        const codeBlocks = container.querySelectorAll('pre code');
-        codeBlocks.forEach((codeBlock, index) => {
-          const pre = codeBlock.parentElement;
-          
-          // Wrap in container if not already wrapped
-          if (!pre.parentElement.classList.contains('code-block-container')) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'code-block-container';
-            pre.parentNode.insertBefore(wrapper, pre);
-            wrapper.appendChild(pre);
-          }
+function escapeHtml(text) {
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
 
-          // Add copy button
-          const copyButton = document.createElement('button');
-          copyButton.className = 'copy-button';
-          copyButton.textContent = 'Copy';
-          copyButton.onclick = () => copyCodeToClipboard(codeBlock.textContent, copyButton);
-          
-          pre.parentElement.appendChild(copyButton);
-        });
-      }
+// Model output is untrusted, so the generated HTML is always sanitised
+export function renderMarkdown(text) {
+  configureMarked();
+  const html = globalThis.marked ? marked.parse(text) : escapeHtml(text).replace(/\n/g, "<br>");
+  return globalThis.DOMPurify ? DOMPurify.sanitize(html) : escapeHtml(text);
+}
 
-      function copyCodeToClipboard(code, button) {
-        navigator.clipboard.writeText(code).then(() => {
-          const originalText = button.textContent;
-          button.textContent = 'Copied!';
-          button.style.background = 'rgba(40, 167, 69, 0.8)';
-          
-          setTimeout(() => {
-            button.textContent = originalText;
-            button.style.background = 'rgba(255, 255, 255, 0.1)';
-          }, 2000);
-        }).catch(err => {
-          console.error('Failed to copy code: ', err);
-          button.textContent = 'Failed';
-          setTimeout(() => {
-            button.textContent = 'Copy';
-          }, 2000);
-        });
-      }
+export function copyToClipboard(text, button) {
+  const label = button.querySelector(".btn-label") ?? button;
+  const original = label.textContent;
 
-    export  function displayMessage(content, role, isStreaming = false) {
-        const messagesDiv = document.getElementById('response-display');
-        
-        // Create message container
-        const messageContainer = document.createElement('div');
-        messageContainer.className = `message-container ${role}`;
-        
-        // Create message header
-        const messageHeader = document.createElement('div');
-        messageHeader.className = `message-header ${role}`;
-        messageHeader.textContent = role === 'user' ? 'You' : (selectedPlatform || 'Assistant');
-        
-        // Create message content
-        const messageContent = document.createElement('div');
-        messageContent.className = 'message-content';
-        
-        if (isStreaming) {
-          // For streaming, start with raw text and update
-          messageContent.textContent = content;
-        } else {
-          // For complete messages, render markdown
-          messageContent.innerHTML = renderMarkdown(content);
-          addCopyButtonsToCodeBlocks(messageContent);
-        }
-        
-        messageContainer.appendChild(messageHeader);
-        messageContainer.appendChild(messageContent);
-        messagesDiv.appendChild(messageContainer);
-        
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        
-        return messageContent; // Return content div for streaming updates
-      }
+  navigator.clipboard.writeText(text).then(() => {
+    label.textContent = "Copied!";
+    button.classList.add("is-success");
+  }).catch(err => {
+    console.error("Failed to copy:", err);
+    label.textContent = "Failed";
+  }).finally(() => {
+    setTimeout(() => {
+      label.textContent = original;
+      button.classList.remove("is-success");
+    }, 1600);
+  });
+}
 
-    export  function updateStreamingMessage(contentDiv, fullContent) {
-        // Update with rendered markdown
-        contentDiv.innerHTML = renderMarkdown(fullContent);
-        addCopyButtonsToCodeBlocks(contentDiv);
-        
-        // Scroll to bottom
-        const messagesDiv = document.getElementById('response-display');
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-      }
+// Wraps code blocks with a header (language + copy button) and highlights them
+export function enhanceCodeBlocks(container, { highlight = true } = {}) {
+  container.querySelectorAll("pre > code").forEach(codeBlock => {
+    const pre = codeBlock.parentElement;
+    if (pre.parentElement.classList.contains("code-block")) return;
+
+    const lang = [...codeBlock.classList]
+      .find(c => c.startsWith("language-"))?.replace("language-", "") || "text";
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "code-block";
+
+    const header = document.createElement("div");
+    header.className = "code-block-header";
+
+    const langLabel = document.createElement("span");
+    langLabel.className = "code-block-lang";
+    langLabel.textContent = lang;
+
+    const copyButton = document.createElement("button");
+    copyButton.type = "button";
+    copyButton.className = "copy-button";
+    copyButton.innerHTML = '<span class="btn-label">Copy</span>';
+    copyButton.addEventListener("click", () => copyToClipboard(codeBlock.textContent, copyButton));
+
+    header.append(langLabel, copyButton);
+    pre.parentNode.insertBefore(wrapper, pre);
+    wrapper.append(header, pre);
+  });
+
+  // Autoloader fetches grammars on demand, so highlight after insertion
+  if (highlight && globalThis.Prism) {
+    Prism.highlightAllUnder(container);
+  }
+}
+
+// Full render: markdown + code block chrome + highlighting
+export function renderInto(element, text) {
+  element.innerHTML = renderMarkdown(text);
+  enhanceCodeBlocks(element);
+}

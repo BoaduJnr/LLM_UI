@@ -1116,12 +1116,7 @@ if (!document.getElementById('audio-player-animations')) {
     document.head.appendChild(animations);
 }
 
-// Export for use
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = AudioPlayer;
-} else if (typeof window !== 'undefined') {
-    window.AudioPlayer = AudioPlayer;
-}
+
 
 /*
  * COMPACT USAGE EXAMPLES:

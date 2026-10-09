@@ -1,15 +1,69 @@
 /* css/components/header.css */
 .header {
-  padding: 20px;
-  border-bottom: 1px solid #e0e0e0;
-  background: #fafafa;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 8px;
+  height: var(--header-height);
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
 }
 
-.header h1 {
-  font-size: 24px;
-  color: #333;
-  margin: 0;
+/* Desktop: the sidebar has its own close button, so only show this when collapsed */
+.app.sidebar-open .header-menu {
+  display: none;
+}
+
+.model-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  max-width: min(420px, 60vw);
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  transition: background 0.15s ease;
+}
+
+.model-pill:hover {
+  background: var(--surface-2);
+}
+
+.model-pill #current-model-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.model-pill svg {
+  flex-shrink: 0;
+  color: var(--text-subtle);
+}
+
+.model-pill-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--success);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 20%, transparent);
+}
+
+.model-pill.is-empty {
+  color: var(--text-muted);
+}
+
+.model-pill.is-empty .model-pill-dot {
+  background: var(--text-subtle);
+  box-shadow: none;
+}
+
+.header-actions {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
 }

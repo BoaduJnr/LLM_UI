@@ -552,7 +552,6 @@ export class ImageViewer {
     
     createImageElement() {
         this.image = new Image();
-        console.log(this.imageData)
         // Handle different image data formats
         if (typeof this.imageData === 'string') {
             // Base64 data URL or regular URL
@@ -1364,12 +1363,7 @@ if (!document.getElementById('image-viewer-animations')) {
     document.head.appendChild(animations);
 }
 
-// Export for use
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = ImageViewer;
-} else if (typeof window !== 'undefined') {
-    window.ImageViewer = ImageViewer;
-}
+
 
 /*
  * COMPACT USAGE EXAMPLES:
